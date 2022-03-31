@@ -1,14 +1,36 @@
 package lesson4;
 
+import java.util.List;
+
 public class ABCTask extends Thread{
     static Object monitor = new Object();
-    static volatile char currLitter ='a';
+    static volatile int currLitter =1;
     static final int ITERATIONS =5;
-    char flowLitter;
+    Litters flowLitter;
+    public enum Litters{
+        LIT_A(1,"A"),
+        LIT_B(2,"B"),
+        LIT_C(3,"C");
+
+        private int num;
+        private String lit;
+        Litters(int num,String lit){
+            this.num=num;
+            this.lit=lit;
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public String getLit() {
+            return lit;
+        }
+    }
 
 
-    public ABCTask(char flowLitter) {
-        this.flowLitter = flowLitter;
+    public ABCTask(Litters lit) {
+        this.flowLitter = lit;
     }
 
     @Override
@@ -16,10 +38,12 @@ public class ABCTask extends Thread{
         try {
             for (int i = 0; i < ITERATIONS; i++) {
                 synchronized (monitor) {
-                    while (currLitter != flowLitter) {
+                    while (currLitter != flowLitter.getNum()) {
                         monitor.wait();
                     }
-                    switch (flowLitter) {
+                    System.out.println(flowLitter.getLit());
+                    currLitter = flowLitter.getNum()%3+1;
+/*                    switch (flowLitter) {
                         case ('a'):
                             System.out.println("A");
                             currLitter = 'b';
@@ -33,7 +57,7 @@ public class ABCTask extends Thread{
                             currLitter = 'a';
                             break;
 
-                    }
+                    }*/
                     monitor.notifyAll();
                 }
 
